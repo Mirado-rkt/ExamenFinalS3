@@ -1,0 +1,35 @@
+creer cette site et avec une design de mvc tres cher , ressemblant à peu prés à un template ,
+Thème
+Le BNGRC souhaite créer une application de suivi des collectes et des distributions de dons pour les
+sinistrés.
+Les sinistrés sont répartis par ville dans une région. Les sinitrés ont des besoins :
+en nature (riz, huile, ... )
+en matériaux ( tôle, clou, ...)
+en argent .
+
+Fonctionnement
+On saisie les besoins des sinistrés par ville (on n'identifie pas personnellement un sinistré). On saisie les
+dons On simule le dispatch des dons par ordre de date et de saisie .
+
+Objectifs
+Dans une page tableau de bord, on doit voir la liste des villes avec les besoins, et les dons attribués à
+chaque ville.
+
+Règle de gestion
+Chaque besoin possède un prix unitaire et un quantité. On suppose que le prix unitaire ne change jamais.
+
+Notes
+A vous de créer toutes les pages nécéssaires au fonctionnement de l'application.
+Fonctionnalités
+Design
+Code
+
+, et voilà une coquie de projet flight mvc vide ,
+adapte le , et utilise les bootstrap qui sont dans le assets/css et dans assets/js ,
+et notre database est mysql , creer juste un fichier database.sql 
+et c'est moi qui le fait entrer dans la base manuellement , et pour 
+deployer il faaut que je fait commme cela php -S localhost:8000 index.php 
+
+et il faut regler un chemin car avant le 
+.htaccess et le index.php etait dans le public et maintenat je le sort dehors pour 
+le deployer sur une serveur ensuite . fait en sorte que tout fonctionne 

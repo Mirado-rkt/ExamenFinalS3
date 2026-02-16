@@ -1,0 +1,183 @@
+donnees par trajet :
+    -Date et heure debut trajet,
+    -date et heure fin trajet 
+    -Le montant de la recette
+    -Le montant du carburant
+
+On connait à l'avancement de la distance en Km d'un trajet.
+
+table 
+kilometre effectué
+Montant recette
+Montant carburant
+vehicule
+chauffeur
+
+-montant benefice par vehicule
+-montant benefice par jour
+afficher trajet plus rentable
+
+
+trajet
+date debut
+heure debut
+date fin
+heure fin
+montant recette
+montant carburant
+
+vehicules
+chauffeyur(tsyaiko)
+km effectue
+montant recette
+montant carburant
+
+
+✅ TO-DO LIST DÉTAILLÉE PAR ÉTAPE
+🎯 ÉTAPE 1 : BASE DE DONNÉES (À FAIRE EN PREMIER)
+
+    Fichier 1 : 01_create_database.sql
+
+        Créer DB taxibe_coop
+
+        Choisir charset UTF8
+
+    Fichier 2 : 02_create_tables.sql
+
+        Table vehicules
+
+        Table chauffeurs
+
+        Table trajets
+
+        Table affectations_jour
+
+        Table pannes
+
+        Table parametres_salaire
+
+        Table versements_salaire
+
+    Fichier 3 : 03_insert_test_data.sql
+
+        5 véhicules
+
+        8 chauffeurs
+
+        50 trajets (sur 30 jours)
+
+        10 pannes
+
+        Paramètres salaires initiaux
+
+    Fichier 4 : 04_queries_trajets.sql
+
+        Requête 1: Liste jour + km + recette + carburant
+
+        Requête 2: Bénéfice par véhicule
+
+        Requête 3: Bénéfice par jour
+
+        Requête 4: Trajets rentables/jour
+
+🎯 ÉTAPE 2 : CONFIGURATION PHP
+
+    Fichier : app/config/database.php
+
+        Connexion MySQL/PostgreSQL
+
+        Variables d'environnement
+
+    Fichier : app/config/flight.php
+
+        Routes de base
+
+        Configuration Flight
+
+🎯 ÉTAPE 3 : MODÈLES (Models)
+
+    Fichier : app/models/TrajetModel.php
+
+    Fichier : app/models/VehiculeModel.php
+
+    Fichier : app/models/ChauffeurModel.php
+
+    Fichier : app/models/PanneModel.php
+
+    Fichier : app/models/SalaireModel.php
+
+🎯 ÉTAPE 4 : CONTRÔLEURS (Controllers)
+
+    Fichier : app/controllers/TrajetController.php
+
+    Fichier : app/controllers/VehiculeController.php
+
+    Fichier : app/controllers/ChauffeurController.php
+
+    Fichier : app/controllers/PanneController.php
+
+    Fichier : app/controllers/SalaireController.php
+
+🎯 ÉTAPE 5 : VUES (Views)
+
+    Fichier : app/views/layouts/main.php
+
+    Fichier : app/views/dashboard.php
+
+    Fichier : app/views/trajets.php
+
+    Fichier : app/views/vehicules.php
+
+    Fichier : app/views/pannes.php
+
+    Fichier : app/views/salaires.php
+
+🎯 ÉTAPE 6 : POINT D'ENTRÉE
+
+    Fichier : app/index.php
+
+        Autoloader
+
+        Routes principales
+
+        Lancement app
+
+🎯 ÉTAPE 7 : TESTS
+
+    Fichier : tests/test_queries.sql
+
+    Fichier : tests/test_calculs.php
+
+    Fichier : tests/test_interface.html
+
+🎯 ÉTAPE 8 : DOCUMENTATION
+
+    Fichier : docs/README.md
+
+    Fichier : docs/guide_utilisation.md
+
+    Fichier : Schémas BDD
+
+🚀 ORDRE D'EXÉCUTION RECOMMANDÉ :
+
+    📁 database/01_create_database.sql ← COMMENCER ICI
+
+    📁 database/02_create_tables.sql
+
+    📁 database/03_insert_test_data.sql
+
+    📁 database/04_queries_trajets.sql
+
+    📁 app/config/database.php
+
+    📁 app/models/ (tous les models)
+
+    📁 app/controllers/ (tous les controllers)
+
+    📁 app/views/ (toutes les vues)
+
+    📁 app/index.php
+
+    📁 tests/ (vérification)
+
+Je commence par créer le premier fichier SQL de la base de données ? 🎯
