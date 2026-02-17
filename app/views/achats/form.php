@@ -74,10 +74,13 @@
                 <div class="col-md-6">
                     <label for="don_detail_id" class="form-label">Source de financement (Don en argent) <span class="text-danger">*</span></label>
                     <select name="don_detail_id" id="don_detail_id" class="form-select" required onchange="updateMaxQuantite()">
+                        <?php if (count($dons_argent) > 1): ?>
                         <option value="">-- Sélectionner un don --</option>
-                        <?php foreach ($dons_argent as $da): ?>
+                        <?php endif; ?>
+                        <?php foreach ($dons_argent as $index => $da): ?>
                             <option value="<?= $da['don_detail_id'] ?>" 
-                                    data-montant="<?= $da['montant_disponible'] ?>">
+                                    data-montant="<?= $da['montant_disponible'] ?>"
+                                    <?= (count($dons_argent) == 1) ? 'selected' : '' ?>>
                                 <?= e($da['donateur']) ?> - Disponible: <?= format_ar((float) $da['montant_disponible']) ?> 
                                 (<?= date('d/m/Y', strtotime($da['date_don'])) ?>)
                             </option>
@@ -174,6 +177,11 @@ function calculerMontant() {
         btnSubmit.disabled = false;
     }
 }
+
+// Initialiser au chargement de la page
+document.addEventListener('DOMContentLoaded', function() {
+    updateMaxQuantite();
+});
 </script>
 
 <?php endif; ?>

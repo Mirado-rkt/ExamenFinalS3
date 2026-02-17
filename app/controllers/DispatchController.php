@@ -92,6 +92,21 @@ class DispatchController
     }
 
     /**
+     * Initialiser/réinitialiser les données (dispatch et achats)
+     */
+    public function initialiser(): void
+    {
+        $db = $this->app->db();
+
+        // Supprimer tous les dispatches et achats
+        $db->runQuery("DELETE FROM dispatch");
+        $db->runQuery("DELETE FROM achat");
+
+        flash('success', 'Initialisation effectuée : tous les dispatches et achats ont été supprimés.');
+        $this->app->redirect(base_url('/dispatch'));
+    }
+
+    /**
      * Valider le dispatch : confirmer l'application définitive
      */
     public function valider(): void

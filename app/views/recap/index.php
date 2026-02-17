@@ -6,22 +6,21 @@
             <i class="bi bi-clipboard-data me-2"></i>Récapitulation
         </h4>
         <p class="text-muted mb-0 small">
-            Vue d'ensemble des besoins, dons et dispatches —
-            <span id="last-update">Dernière mise à jour : -</span>
+            Vue d'ensemble des besoins, dons et dispatches
         </p>
     </div>
-    <button type="button" class="btn btn-primary" onclick="actualiserDonnees()" id="btn-actualiser">
+    <a href="<?= base_url('/recap') ?>" class="btn btn-primary">
         <i class="bi bi-arrow-clockwise me-1"></i> Actualiser
-    </button>
+    </a>
 </div>
 
 <!-- Cartes de résumé -->
-<div class="row g-4 mb-4" id="cards-resume">
+<div class="row g-4 mb-4">
     <div class="col-md-4">
         <div class="card h-100 border-primary">
             <div class="card-body text-center">
                 <h6 class="text-muted mb-2"><i class="bi bi-card-checklist me-1"></i> Total Besoins</h6>
-                <h3 class="fw-bold text-primary" id="total-besoins">-</h3>
+                <h3 class="fw-bold text-primary"><?= format_ar($total_besoins) ?></h3>
             </div>
         </div>
     </div>
@@ -29,10 +28,10 @@
         <div class="card h-100 border-success">
             <div class="card-body text-center">
                 <h6 class="text-muted mb-2"><i class="bi bi-check-circle me-1"></i> Besoins Satisfaits</h6>
-                <h3 class="fw-bold text-success" id="total-satisfait">-</h3>
+                <h3 class="fw-bold text-success"><?= format_ar($total_satisfait) ?></h3>
                 <div class="small text-muted">
-                    <span id="detail-dispatch">Dispatch: -</span> | 
-                    <span id="detail-achats">Achats: -</span>
+                    <span>Dispatch: <?= format_ar($total_dispatch) ?></span> | 
+                    <span>Achats: <?= format_ar($total_achats) ?></span>
                 </div>
             </div>
         </div>
@@ -41,7 +40,7 @@
         <div class="card h-100 border-danger">
             <div class="card-body text-center">
                 <h6 class="text-muted mb-2"><i class="bi bi-exclamation-circle me-1"></i> Besoins Restants</h6>
-                <h3 class="fw-bold text-danger" id="total-restant">-</h3>
+                <h3 class="fw-bold text-danger"><?= format_ar($total_restant) ?></h3>
             </div>
         </div>
     </div>
@@ -52,11 +51,16 @@
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-2">
             <span class="fw-semibold">Taux de couverture global</span>
-            <span class="fw-bold" id="taux-couverture">-</span>
+            <span class="fw-bold"><?= $taux_couverture ?>%</span>
         </div>
         <div class="progress" style="height: 25px;">
-            <div class="progress-bar bg-success" role="progressbar" id="progress-bar" style="width: 0%;">
-                <span id="progress-text">0%</span>
+            <?php
+            $progress_class = 'bg-danger';
+            if ($taux_couverture >= 75) $progress_class = 'bg-success';
+            elseif ($taux_couverture >= 40) $progress_class = 'bg-warning';
+            ?>
+            <div class="progress-bar <?= $progress_class ?>" role="progressbar" style="width: <?= $taux_couverture ?>%;">
+                <?= $taux_couverture ?>%
             </div>
         </div>
     </div>
@@ -80,12 +84,46 @@
                     <th style="width: 150px;">Couverture</th>
                 </tr>
             </thead>
-            <tbody id="table-types">
+            <tbody>
+                <?php if (empty($details_types)): ?>
                 <tr>
-                    <td colspan="7" class="text-center text-muted py-4">
-                        <i class="bi bi-arrow-clockwise"></i> Cliquez sur "Actualiser" pour charger les données
-                    </td>
+                    <td colspan="7" class="text-center text-muted py-4">Aucune donnée</td>
                 </tr>
+                <?php else: ?>
+                    <?php foreach ($details_types as $t): ?>
+                    <?php
+                    $besoin_val = (float) $t['total_besoin_valeur'];
+                    $dispatch_val = (float) $t['total_dispatch_valeur'];
+                    $achat_val = (float) $t['total_achat_valeur'];
+                    $restant_val = $besoin_val - $dispatch_val - $achat_val;
+                    if ($restant_val < 0) $restant_val = 0;
+                    $taux = $besoin_val > 0 ? round((($dispatch_val + $achat_val) / $besoin_val) * 100) : 0;
+                    $taux_class = 'bg-danger';
+                    if ($taux >= 75) $taux_class = 'bg-success';
+                    elseif ($taux >= 40) $taux_class = 'bg-warning';
+                    ?>
+                    <tr>
+                        <td class="fw-semibold"><?= e($t['nom']) ?></td>
+                        <td>
+                            <span class="badge <?= categorie_badge($t['categorie']) ?>">
+                                <?= categorie_label($t['categorie']) ?>
+                            </span>
+                        </td>
+                        <td class="text-end"><?= format_ar($besoin_val) ?></td>
+                        <td class="text-end text-success"><?= format_ar($dispatch_val) ?></td>
+                        <td class="text-end text-info"><?= format_ar($achat_val) ?></td>
+                        <td class="text-end text-danger"><?= format_ar($restant_val) ?></td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="progress flex-grow-1" style="height: 7px;">
+                                    <div class="progress-bar <?= $taux_class ?>" style="width: <?= $taux ?>%"></div>
+                                </div>
+                                <small class="fw-bold text-muted" style="min-width: 38px;"><?= $taux ?>%</small>
+                            </div>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </tbody>
         </table>
     </div>
@@ -109,152 +147,45 @@
                     <th style="width: 150px;">Couverture</th>
                 </tr>
             </thead>
-            <tbody id="table-villes">
+            <tbody>
+                <?php if (empty($details_villes)): ?>
                 <tr>
-                    <td colspan="7" class="text-center text-muted py-4">
-                        <i class="bi bi-arrow-clockwise"></i> Cliquez sur "Actualiser" pour charger les données
-                    </td>
+                    <td colspan="7" class="text-center text-muted py-4">Aucune donnée</td>
                 </tr>
+                <?php else: ?>
+                    <?php foreach ($details_villes as $v): ?>
+                    <?php
+                    $besoin_v = (float) $v['total_besoin'];
+                    $dispatch_v = (float) $v['total_dispatch'];
+                    $achat_v = (float) $v['total_achat'];
+                    $restant_v = $besoin_v - $dispatch_v - $achat_v;
+                    if ($restant_v < 0) $restant_v = 0;
+                    $taux_v = $besoin_v > 0 ? round((($dispatch_v + $achat_v) / $besoin_v) * 100) : 0;
+                    $taux_v_class = 'bg-danger';
+                    if ($taux_v >= 75) $taux_v_class = 'bg-success';
+                    elseif ($taux_v >= 40) $taux_v_class = 'bg-warning';
+                    ?>
+                    <tr>
+                        <td class="fw-semibold"><?= e($v['ville']) ?></td>
+                        <td><span class="badge bg-light text-dark border"><?= e($v['region']) ?></span></td>
+                        <td class="text-end"><?= format_ar($besoin_v) ?></td>
+                        <td class="text-end text-success"><?= format_ar($dispatch_v) ?></td>
+                        <td class="text-end text-info"><?= format_ar($achat_v) ?></td>
+                        <td class="text-end text-danger"><?= format_ar($restant_v) ?></td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="progress flex-grow-1" style="height: 7px;">
+                                    <div class="progress-bar <?= $taux_v_class ?>" style="width: <?= $taux_v ?>%"></div>
+                                </div>
+                                <small class="fw-bold text-muted" style="min-width: 38px;"><?= $taux_v ?>%</small>
+                            </div>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </tbody>
         </table>
     </div>
 </div>
-
-<script>
-function formatAr(montant) {
-    return new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(montant) + ' Ar';
-}
-
-function getCategorieLabel(cat) {
-    const labels = { 'nature': 'En nature', 'materiau': 'Matériaux', 'argent': 'Argent' };
-    return labels[cat] || cat;
-}
-
-function getCategorieBadge(cat) {
-    const badges = { 'nature': 'bg-success', 'materiau': 'bg-warning text-dark', 'argent': 'bg-info text-dark' };
-    return badges[cat] || 'bg-secondary';
-}
-
-function getProgressClass(taux) {
-    if (taux >= 75) return 'bg-success';
-    if (taux >= 40) return 'bg-warning';
-    return 'bg-danger';
-}
-
-function actualiserDonnees() {
-    const btn = document.getElementById('btn-actualiser');
-    btn.disabled = true;
-    btn.innerHTML = '<i class="bi bi-arrow-clockwise spin me-1"></i> Chargement...';
-
-    fetch('<?= base_url('/recap/data') ?>')
-        .then(response => response.json())
-        .then(result => {
-            if (result.success) {
-                const data = result.data;
-
-                // Mise à jour des cartes
-                document.getElementById('total-besoins').textContent = formatAr(data.total_besoins);
-                document.getElementById('total-satisfait').textContent = formatAr(data.total_satisfait);
-                document.getElementById('total-restant').textContent = formatAr(data.total_restant);
-                document.getElementById('detail-dispatch').textContent = 'Dispatch: ' + formatAr(data.total_dispatch);
-                document.getElementById('detail-achats').textContent = 'Achats: ' + formatAr(data.total_achats);
-
-                // Barre de progression
-                const taux = data.taux_couverture;
-                document.getElementById('taux-couverture').textContent = taux + '%';
-                const progressBar = document.getElementById('progress-bar');
-                progressBar.style.width = taux + '%';
-                progressBar.textContent = taux + '%';
-                progressBar.className = 'progress-bar ' + getProgressClass(taux);
-
-                // Table des types
-                let htmlTypes = '';
-                if (data.details_types.length === 0) {
-                    htmlTypes = '<tr><td colspan="7" class="text-center text-muted py-4">Aucune donnée</td></tr>';
-                } else {
-                    data.details_types.forEach(t => {
-                        const restant = parseFloat(t.total_besoin_valeur) - parseFloat(t.total_dispatch_valeur) - parseFloat(t.total_achat_valeur);
-                        const tauxType = t.total_besoin_valeur > 0 ? Math.round(((parseFloat(t.total_dispatch_valeur) + parseFloat(t.total_achat_valeur)) / parseFloat(t.total_besoin_valeur)) * 100) : 0;
-                        htmlTypes += `
-                            <tr>
-                                <td class="fw-semibold">${t.nom}</td>
-                                <td><span class="badge ${getCategorieBadge(t.categorie)}">${getCategorieLabel(t.categorie)}</span></td>
-                                <td class="text-end">${formatAr(parseFloat(t.total_besoin_valeur))}</td>
-                                <td class="text-end text-success">${formatAr(parseFloat(t.total_dispatch_valeur))}</td>
-                                <td class="text-end text-info">${formatAr(parseFloat(t.total_achat_valeur))}</td>
-                                <td class="text-end text-danger">${formatAr(restant > 0 ? restant : 0)}</td>
-                                <td>
-                                    <div class="d-flex align-items-center gap-2">
-                                        <div class="progress flex-grow-1" style="height: 7px;">
-                                            <div class="progress-bar ${getProgressClass(tauxType)}" style="width: ${tauxType}%"></div>
-                                        </div>
-                                        <small class="fw-bold text-muted" style="min-width: 38px;">${tauxType}%</small>
-                                    </div>
-                                </td>
-                            </tr>
-                        `;
-                    });
-                }
-                document.getElementById('table-types').innerHTML = htmlTypes;
-
-                // Table des villes
-                let htmlVilles = '';
-                if (data.details_villes.length === 0) {
-                    htmlVilles = '<tr><td colspan="7" class="text-center text-muted py-4">Aucune donnée</td></tr>';
-                } else {
-                    data.details_villes.forEach(v => {
-                        const restant = parseFloat(v.total_besoin) - parseFloat(v.total_dispatch) - parseFloat(v.total_achat);
-                        const tauxVille = v.total_besoin > 0 ? Math.round(((parseFloat(v.total_dispatch) + parseFloat(v.total_achat)) / parseFloat(v.total_besoin)) * 100) : 0;
-                        htmlVilles += `
-                            <tr>
-                                <td class="fw-semibold">${v.ville}</td>
-                                <td><span class="badge bg-light text-dark border">${v.region}</span></td>
-                                <td class="text-end">${formatAr(parseFloat(v.total_besoin))}</td>
-                                <td class="text-end text-success">${formatAr(parseFloat(v.total_dispatch))}</td>
-                                <td class="text-end text-info">${formatAr(parseFloat(v.total_achat))}</td>
-                                <td class="text-end text-danger">${formatAr(restant > 0 ? restant : 0)}</td>
-                                <td>
-                                    <div class="d-flex align-items-center gap-2">
-                                        <div class="progress flex-grow-1" style="height: 7px;">
-                                            <div class="progress-bar ${getProgressClass(tauxVille)}" style="width: ${tauxVille}%"></div>
-                                        </div>
-                                        <small class="fw-bold text-muted" style="min-width: 38px;">${tauxVille}%</small>
-                                    </div>
-                                </td>
-                            </tr>
-                        `;
-                    });
-                }
-                document.getElementById('table-villes').innerHTML = htmlVilles;
-
-                // Mise à jour timestamp
-                document.getElementById('last-update').textContent = 'Dernière mise à jour : ' + result.timestamp;
-            }
-        })
-        .catch(error => {
-            console.error('Erreur:', error);
-            alert('Erreur lors du chargement des données');
-        })
-        .finally(() => {
-            btn.disabled = false;
-            btn.innerHTML = '<i class="bi bi-arrow-clockwise me-1"></i> Actualiser';
-        });
-}
-
-// Charger les données au chargement de la page
-document.addEventListener('DOMContentLoaded', function() {
-    actualiserDonnees();
-});
-</script>
-
-<style>
-.spin {
-    animation: spin 1s linear infinite;
-}
-@keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-</style>
 
 <?php include __DIR__ . '/../layout/footer.php'; ?>

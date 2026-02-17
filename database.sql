@@ -143,3 +143,20 @@ INSERT INTO don_detail (don_id, type_besoin_id, quantite) VALUES
 (3, 11, 8000000),
 (4, 1, 500),
 (4, 4, 300);
+
+-- =====================================================
+-- DONNÉES DE TEST POUR LES NOUVELLES FONCTIONNALITÉS
+-- =====================================================
+
+-- Achats effectués avec les dons en argent (don_detail_id = 7 = don argent de Fondation TELMA)
+-- Achat de Riz pour Antananarivo (besoin_id=1): 100 kg à 2500 Ar + 10% frais = 275000 Ar
+INSERT INTO achat (besoin_id, don_detail_id, quantite, prix_unitaire, frais_pourcent, montant_total, date_achat) VALUES
+(1, 7, 100, 2500.00, 10.00, 275000.00, '2026-02-12 10:00:00'),
+-- Achat de Tôle pour Antsirabe (besoin_id=9): 20 unités à 35000 Ar + 10% frais = 770000 Ar
+(9, 7, 20, 35000.00, 10.00, 770000.00, '2026-02-12 11:00:00'),
+-- Achat de Ciment pour Antsirabe (besoin_id=10): 10 sacs à 45000 Ar + 10% frais = 495000 Ar
+(10, 7, 10, 45000.00, 10.00, 495000.00, '2026-02-12 14:00:00'),
+-- Achat de Huile pour Toamasina (besoin_id=14): 30 litres à 8000 Ar + 10% frais = 264000 Ar
+(14, 7, 30, 8000.00, 10.00, 264000.00, '2026-02-13 09:00:00'),
+-- Achat de Bois pour Toamasina (besoin_id=15): 50 unités à 15000 Ar + 10% frais = 825000 Ar
+(15, 7, 50, 15000.00, 10.00, 825000.00, '2026-02-13 10:30:00');

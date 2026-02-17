@@ -14,7 +14,7 @@
 <!-- Filtre par ville -->
 <div class="card mb-4">
     <div class="card-body">
-        <form method="GET" action="<?= base_url('/besoins-restants') ?>" class="row g-3 align-items-end">
+        <form method="GET" Acheter="<?= base_url('/besoins-restants') ?>" class="row g-3 align-items-end">
             <div class="col-md-4">
                 <label for="ville_id" class="form-label">Filtrer par ville</label>
                 <select name="ville_id" id="ville_id" class="form-select">
@@ -51,9 +51,17 @@
         </div>
     </div>
     <div class="col-md-6">
-        <div class="alert alert-info mb-0">
-            <i class="bi bi-cash me-2"></i>
-            <strong>Dons en argent disponibles :</strong> <?= format_ar($dons_argent_disponibles) ?>
+        <div class="alert <?= $dons_argent_disponibles > 0 ? 'alert-info' : 'alert-danger' ?> mb-0 d-flex justify-content-between align-items-center">
+            <div>
+                <i class="bi bi-cash me-2"></i>
+                <strong>Dons en argent disponibles :</strong> <?= format_ar($dons_argent_disponibles) ?>
+                <?php if ($dons_argent_disponibles <= 0): ?>
+                    <span class="badge bg-danger ms-2">Épuisé</span>
+                <?php endif; ?>
+            </div>
+            <a href="<?= base_url('/dons/create') ?>" class="btn btn-sm <?= $dons_argent_disponibles > 0 ? 'btn-outline-primary' : 'btn-danger' ?>">
+                <i class="bi bi-plus-circle me-1"></i> Ajouter un don
+            </a>
         </div>
     </div>
 </div>
@@ -66,27 +74,25 @@
             <i class="bi bi-cart me-1"></i> Voir les achats effectués
         </a>
     </div>
-    <div class="table-responsive">
-        <table class="table table-hover">
+    <div class="table-responsive-sm">
+        <table class="table table-hover table-sm">
             <thead>
                 <tr>
-                    <th>#</th>
                     <th>Ville</th>
-                    <th>Région</th>
-                    <th>Type de besoin</th>
-                    <th>Catégorie</th>
-                    <th class="text-end">Qté totale</th>
-                    <th class="text-end">Qté dispatchée</th>
-                    <th class="text-end">Qté achetée</th>
-                    <th class="text-end">Qté restante</th>
-                    <th class="text-end">Valeur restante</th>
-                    <th class="text-end">Actions</th>
+                    <th>Type</th>
+                    <th>Cat.</th>
+                    <th class="text-end">Total</th>
+                    <th class="text-end">Disp.</th>
+                    <th class="text-end">Ach.</th>
+                    <th class="text-end">Reste</th>
+                    <th class="text-end">Valeur</th>
+                    <th class="text-center">Acheter</th>
                 </tr>
             </thead>
             <tbody>
                 <?php if (empty($besoins)): ?>
                 <tr>
-                    <td colspan="11" class="empty-state">
+                    <td colspan="9" class="empty-state">
                         <i class="bi bi-check-circle text-success"></i>
                         <p class="text-success">Tous les besoins sont satisfaits !</p>
                     </td>
@@ -94,13 +100,11 @@
                 <?php else: ?>
                     <?php foreach ($besoins as $b): ?>
                     <tr>
-                        <td class="text-muted"><?= $b['id'] ?></td>
-                        <td class="fw-semibold"><?= e($b['ville_nom']) ?></td>
-                        <td><span class="badge bg-light text-dark border"><?= e($b['region_nom']) ?></span></td>
+                        <td class="fw-semibold" title="<?= e($b['region_nom']) ?>"><?= e($b['ville_nom']) ?></td>
                         <td><?= e($b['type_nom']) ?></td>
                         <td>
                             <span class="badge <?= categorie_badge($b['categorie']) ?>">
-                                <?= categorie_label($b['categorie']) ?>
+                                <?= substr(categorie_label($b['categorie']), 0, 3) ?>
                             </span>
                         </td>
                         <td class="text-end"><?= format_nb((float) $b['quantite']) ?></td>
@@ -108,14 +112,14 @@
                         <td class="text-end text-info"><?= format_nb((float) $b['quantite_achetee']) ?></td>
                         <td class="text-end fw-bold text-danger"><?= format_nb((float) $b['quantite_restante']) ?></td>
                         <td class="text-end fw-semibold"><?= format_ar((float) $b['valeur_restante']) ?></td>
-                        <td class="text-end">
+                        <td class="text-center">
                             <?php if ($b['categorie'] !== 'argent'): ?>
                             <a href="<?= base_url('/achats/create?besoin_id=' . $b['id']) ?>" 
                                class="btn btn-sm btn-success" title="Acheter ce besoin">
-                                <i class="bi bi-cart-plus"></i> Acheter
+                                <i class="bi bi-cart-plus"></i>
                             </a>
                             <?php else: ?>
-                            <span class="text-muted small">-</span>
+                            <span class="text-muted">-</span>
                             <?php endif; ?>
                         </td>
                     </tr>

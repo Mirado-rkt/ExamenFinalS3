@@ -63,6 +63,7 @@ $router->group('', function (Router $router) {
 
 	// ===== DISPATCH =====
 	$router->get('/dispatch', [DispatchController::class, 'index']);
+	$router->post('/dispatch/initialiser', [DispatchController::class, 'initialiser']);
 	$router->post('/dispatch/simuler', [DispatchController::class, 'simuler']);
 	$router->post('/dispatch/valider', [DispatchController::class, 'valider']);
 

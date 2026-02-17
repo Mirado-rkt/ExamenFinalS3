@@ -127,6 +127,30 @@ class AchatController
             return;
         }
 
+        // Vérifier si ce type de besoin existe encore dans les dons restants (nature/matériaux)
+        $total_dons_type = (float) $db->fetchField("
+            SELECT COALESCE(SUM(dd.quantite), 0)
+            FROM don_detail dd
+            JOIN type_besoin tb ON dd.type_besoin_id = tb.id
+            WHERE dd.type_besoin_id = ? AND tb.categorie != 'argent'
+        ", [(int) $besoin['type_besoin_id']]);
+
+        $total_dispatche_type = (float) $db->fetchField("
+            SELECT COALESCE(SUM(dp.quantite), 0)
+            FROM dispatch dp
+            JOIN don_detail dd ON dp.don_detail_id = dd.id
+            WHERE dd.type_besoin_id = ?
+        ", [(int) $besoin['type_besoin_id']]);
+
+        $don_restant_type = $total_dons_type - $total_dispatche_type;
+
+        // Si des dons de ce type sont encore disponibles, bloquer l'achat
+        if ($don_restant_type > 0) {
+            flash('error', 'Impossible d\'acheter : Ce type de besoin (' . $besoin['type_nom'] . ') est encore disponible dans les dons en nature/matériaux (' . format_nb($don_restant_type) . ' unités restantes). Exécutez d\'abord le dispatch pour utiliser les dons directs.');
+            $this->app->redirect(base_url('/besoins-restants'));
+            return;
+        }
+
         // Récupérer les dons en argent disponibles (non entièrement utilisés)
         $dons_argent = $db->fetchAll("
             SELECT dd.id AS don_detail_id, dd.quantite AS montant_don,
@@ -210,16 +234,25 @@ class AchatController
         }
 
         // Vérifier si ce type de besoin existe encore dans les dons restants (nature/matériaux)
-        $don_restant = $db->fetchField("
-            SELECT COALESCE(SUM(dd.quantite), 0) - COALESCE(
-                (SELECT SUM(dp.quantite) FROM dispatch dp WHERE dp.don_detail_id = dd.id), 0
-            )
+        // On calcule : total des dons de ce type - total dispatché de ce type
+        $total_dons_type = (float) $db->fetchField("
+            SELECT COALESCE(SUM(dd.quantite), 0)
             FROM don_detail dd
+            JOIN type_besoin tb ON dd.type_besoin_id = tb.id
+            WHERE dd.type_besoin_id = ? AND tb.categorie != 'argent'
+        ", [(int) $besoin['type_besoin_id']]);
+
+        $total_dispatche_type = (float) $db->fetchField("
+            SELECT COALESCE(SUM(dp.quantite), 0)
+            FROM dispatch dp
+            JOIN don_detail dd ON dp.don_detail_id = dd.id
             WHERE dd.type_besoin_id = ?
         ", [(int) $besoin['type_besoin_id']]);
 
-        if ((float) $don_restant >= $quantite) {
-            flash('error', 'Erreur : Ce type de besoin (' . $besoin['type_nom'] . ') est encore disponible dans les dons en nature/matériaux. Utilisez d\'abord les dons directs.');
+        $don_restant = $total_dons_type - $total_dispatche_type;
+
+        if ($don_restant > 0) {
+            flash('error', 'Erreur : Ce type de besoin (' . $besoin['type_nom'] . ') est encore disponible dans les dons en nature/matériaux (' . format_nb($don_restant) . ' unités restantes). Utilisez d\'abord les dons directs via le dispatch avant d\'acheter.');
             $this->app->redirect(base_url('/achats/create?besoin_id=' . $besoin_id));
             return;
         }

@@ -16,6 +16,12 @@
         </p>
     </div>
     <div class="d-flex gap-2">
+        <form method="POST" action="<?= base_url('/dispatch/initialiser') ?>" class="d-inline"
+              onsubmit="return confirm('Attention : Cette action va réinitialiser toutes les données (dispatch, achats). Continuer ?')">
+            <button type="submit" class="btn btn-warning">
+                <i class="bi bi-arrow-repeat me-1"></i> Initialiser
+            </button>
+        </form>
         <form method="POST" action="<?= base_url('/dispatch/simuler') ?>" class="d-inline">
             <button type="submit" class="btn btn-outline-primary">
                 <i class="bi bi-play-circle me-1"></i> Simuler
@@ -50,7 +56,7 @@
                     <th>Ville</th>
                     <th>Région</th>
                     <th class="text-end">Besoins (valeur)</th>
-                    <th class="text-end">Dispatché</th>
+                    <th class="text-end">Don</th>
                     <th class="text-end">Reste</th>
                     <th style="width: 180px;">Couverture</th>
                 </tr>
