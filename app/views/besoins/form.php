@@ -11,12 +11,13 @@
             </div>
             <div class="card-body p-4">
                 <form method="POST" action="<?= $besoin ? '/besoins/update/' . $besoin['id'] : '/besoins/store' ?>">
+                    <?php $selectedVilleId = (int) ($besoin['ville_id'] ?? ($selected_ville_id ?? 0)); ?>
                     <div class="mb-3">
                         <label for="ville_id" class="form-label fw-semibold">Ville</label>
                         <select class="form-select" id="ville_id" name="ville_id" required>
                             <option value="">— Choisir une ville —</option>
                             <?php foreach ($villes as $v): ?>
-                            <option value="<?= $v['id'] ?>" <?= (($besoin['ville_id'] ?? '') == $v['id']) ? 'selected' : '' ?>>
+                            <option value="<?= $v['id'] ?>" <?= ($selectedVilleId === (int) $v['id']) ? 'selected' : '' ?>>
                                 <?= e($v['nom']) ?> (<?= e($v['region_nom']) ?>)
                             </option>
                             <?php endforeach; ?>

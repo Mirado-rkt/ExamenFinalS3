@@ -91,7 +91,7 @@
                 </h6>
                 <small class="text-muted">Région : <?= e($v['region']) ?></small>
             </div>
-            <a href="/besoins/create" class="btn btn-sm btn-outline-primary">
+            <a href="/besoins/create?ville_id=<?= (int) $v['id'] ?>" class="btn btn-sm btn-outline-primary">
                 <i class="bi bi-plus-lg me-1"></i> Ajouter besoin
             </a>
         </div>

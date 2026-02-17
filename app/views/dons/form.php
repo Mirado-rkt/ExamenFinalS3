@@ -14,12 +14,12 @@
                         <div class="col-md-6">
                             <label for="donateur" class="form-label fw-semibold">Donateur</label>
                             <input type="text" class="form-control" id="donateur" name="donateur"
-                                   placeholder="Ex: Croix-Rouge (laisser vide = Anonyme)">
+                                placeholder="Ex: Croix-Rouge (laisser vide = Anonyme)">
                         </div>
                         <div class="col-md-6">
                             <label for="description" class="form-label fw-semibold">Description</label>
                             <input type="text" class="form-control" id="description" name="description"
-                                   placeholder="Ex: Don alimentaire d'urgence">
+                                placeholder="Ex: Don alimentaire d'urgence">
                         </div>
                     </div>
 
@@ -33,28 +33,21 @@
                                 <select class="form-select" name="type_besoin_id[]" required>
                                     <option value="">— Choisir —</option>
                                     <?php foreach ($types as $t): ?>
-                                    <option value="<?= $t['id'] ?>">
-                                        <?= e($t['nom']) ?> (<?= categorie_label($t['categorie']) ?>) — <?= format_ar((float) $t['prix_unitaire']) ?>/u
-                                    </option>
+                                        <option value="<?= $t['id'] ?>">
+                                            <?= e($t['nom']) ?> (<?= categorie_label($t['categorie']) ?>) —
+                                            <?= format_ar((float) $t['prix_unitaire']) ?>/u
+                                        </option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
                             <div style="width: 150px;">
                                 <label class="form-label small fw-semibold">Quantité</label>
-                                <input type="number" class="form-control" name="detail_quantite[]"
-                                       min="0.01" step="0.01" required placeholder="Qté">
+                                <input type="number" class="form-control" name="detail_quantite[]" min="0.01"
+                                    step="0.01" required placeholder="Qté">
                             </div>
-                            <div>
-                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeRow(this)" title="Supprimer">
-                                    <i class="bi bi-x-lg"></i>
-                                </button>
-                            </div>
+
                         </div>
                     </div>
-
-                    <button type="button" class="btn btn-sm btn-outline-secondary mt-2" onclick="addRow()">
-                        <i class="bi bi-plus-lg me-1"></i> Ajouter une ligne
-                    </button>
 
                     <hr>
                     <div class="d-flex justify-content-between">
@@ -70,22 +63,5 @@
         </div>
     </div>
 </div>
-
-<script>
-function addRow() {
-    var container = document.getElementById('detailRows');
-    var first = container.querySelector('.don-detail-row');
-    var clone = first.cloneNode(true);
-    clone.querySelector('select').value = '';
-    clone.querySelector('input').value = '';
-    container.appendChild(clone);
-}
-function removeRow(btn) {
-    var container = document.getElementById('detailRows');
-    if (container.querySelectorAll('.don-detail-row').length > 1) {
-        btn.closest('.don-detail-row').remove();
-    }
-}
-</script>
 
 <?php include __DIR__ . '/../layout/footer.php'; ?>

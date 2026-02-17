@@ -40,6 +40,7 @@ class BesoinController
         $db     = $this->app->db();
         $villes = $db->fetchAll("SELECT v.id, v.nom, r.nom AS region_nom FROM ville v JOIN region r ON v.region_id = r.id ORDER BY r.nom, v.nom");
         $types  = $db->fetchAll("SELECT * FROM type_besoin ORDER BY categorie, nom");
+        $selected_ville_id = (int) ($this->app->request()->query->ville_id ?? 0);
 
         $this->app->render('besoins/form', [
             'page_title'  => 'Nouveau besoin',
@@ -47,6 +48,7 @@ class BesoinController
             'besoin'      => null,
             'villes'      => $villes,
             'types'       => $types,
+            'selected_ville_id' => $selected_ville_id,
         ]);
     }
 
